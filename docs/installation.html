@@ -37,17 +37,19 @@
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/togglebutton.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="../_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
-    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
-    <script>
-        const thebe_selector = ".thebe"
-        const thebe_selector_input = "pre"
-        const thebe_selector_output = ".output"
-    </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -642,7 +644,7 @@ Here are some additional resources users have found helpful (posted without endo
 <ul class="simple">
 <li><p>Computer:</p>
 <ul>
-<li><p>For reference, we use e.g. Dell workstations (79xx series) with <strong>Ubuntu 16.04 LTS, 18.04 LTS, or 20.04 LTS</strong> and for verions prior to 2.2, we run a Docker container that has TensorFlow, etc. installed (<a class="reference external" href="https://github.com/DeepLabCut/Docker4DeepLabCut2.0">https://github.com/DeepLabCut/Docker4DeepLabCut2.0</a>). Now we use the new Docker containers supplied on this repo, also available through <a class="reference external" href="https://hub.docker.com/r/deeplabcut/deeplabcut">DockerHub</a> or the <a class="reference external" href="https://pypi.org/project/deeplabcut-docker/"><code class="docutils literal notranslate"><span class="pre">deeplabcut-docker</span></code></a> helper script.</p></li>
+<li><p>For reference, we use e.g. Dell workstations (79xx series) with <strong>Ubuntu 16.04 LTS, 18.04 LTS, or 20.04 LTS</strong> and for versions prior to 2.2, we run a Docker container that has TensorFlow, etc. installed (<a class="reference external" href="https://github.com/DeepLabCut/Docker4DeepLabCut2.0">https://github.com/DeepLabCut/Docker4DeepLabCut2.0</a>). Now we use the new Docker containers supplied on this repo, also available through <a class="reference external" href="https://hub.docker.com/r/deeplabcut/deeplabcut">DockerHub</a> or the <a class="reference external" href="https://pypi.org/project/deeplabcut-docker/"><code class="docutils literal notranslate"><span class="pre">deeplabcut-docker</span></code></a> helper script.</p></li>
 </ul>
 </li>
 <li><p>Computer Hardware:</p>
