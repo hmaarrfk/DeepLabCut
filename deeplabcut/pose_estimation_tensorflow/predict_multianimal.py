@@ -117,7 +117,6 @@ def AnalyzeMultiAnimalVideo(
 ):
     """Helper function for analyzing a video with multiple individuals"""
 
-    print("Starting to analyze % ", video)
     vname = Path(video).stem
     videofolder = str(Path(video).parents[0])
     if destfolder is None:
@@ -126,9 +125,9 @@ def AnalyzeMultiAnimalVideo(
     dataname = os.path.join(destfolder, vname + DLCscorer + ".h5")
 
     if os.path.isfile(dataname.split(".h5")[0] + "_full.pickle"):
-        print("Video already analyzed!", dataname)
+        # "Video already analyzed!", dataname
+        pass
     else:
-        print("Loading ", video)
         vid = VideoWriter(video)
         if robust_nframes:
             nframes = vid.get_n_frames(robust=True)
@@ -140,26 +139,9 @@ def AnalyzeMultiAnimalVideo(
             fps = vid.fps
 
         nx, ny = vid.dimensions
-        print(
-            "Duration of video [s]: ",
-            round(duration, 2),
-            ", recorded with ",
-            round(fps, 2),
-            "fps!",
-        )
-        print(
-            "Overall # of frames: ",
-            nframes,
-            " found with (before cropping) frame dimensions: ",
-            nx,
-            ny,
-        )
+
         start = time.time()
 
-        print(
-            "Starting to extract posture from the video(s) with batchsize:",
-            dlc_cfg["batch_size"],
-        )
         if use_shelve:
             shelf_path = dataname.split(".h5")[0] + "_full.pickle"
         else:
@@ -204,7 +186,6 @@ def AnalyzeMultiAnimalVideo(
             "cropping_parameters": coords,
         }
         metadata = {"data": dictionary}
-        print("Video Analyzed. Saving results in %s..." % (destfolder))
 
         if use_shelve:
             metadata_path = dataname.split(".h5")[0] + "_meta.pickle"
