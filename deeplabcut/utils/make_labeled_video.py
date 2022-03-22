@@ -96,18 +96,6 @@ def CreateVideo(
     nframes = clip.nframes
     duration = nframes / fps
 
-    print(
-        "Duration of video [s]: {}, recorded with {} fps!".format(
-            round(duration, 2), round(fps, 2)
-        )
-    )
-    print(
-        "Overall # of frames: {} with cropped frame dimensions: {} {}".format(
-            nframes, nx, ny
-        )
-    )
-    print("Generating frames and creating video.")
-
     df_x, df_y, df_likelihood = Dataframe.values.reshape((len(Dataframe), -1, 3)).T
     if cropping and not displaycropped:
         df_x += x1
@@ -224,17 +212,6 @@ def CreateVideoSlow(
     nframes = clip.nframes
     duration = nframes / fps
 
-    print(
-        "Duration of video [s]: {}, recorded with {} fps!".format(
-            round(duration, 2), round(fps, 2)
-        )
-    )
-    print(
-        "Overall # of frames: {} with cropped frame dimensions: {} {}".format(
-            nframes, nx, ny
-        )
-    )
-    print("Generating frames and creating video.")
     df_x, df_y, df_likelihood = Dataframe.values.reshape((len(Dataframe), -1, 3)).T
     if cropping and not displaycropped:
         df_x += x1
@@ -338,7 +315,6 @@ def CreateVideoSlow(
                 writer.grab_frame()
                 ax.clear()
 
-    print("Labeled video {} successfully created.".format(videooutname))
     plt.switch_backend(prev_backend)
 
 
@@ -620,7 +596,6 @@ def proc_video(
     auxiliaryfunctions.attempttomakefolder(destfolder)
 
     os.chdir(destfolder)  # THE VIDEO IS STILL IN THE VIDEO FOLDER
-    print("Starting to process video: {}".format(video))
     vname = str(Path(video).stem)
 
     if filtered:
@@ -631,9 +606,8 @@ def proc_video(
         videooutname2 = os.path.join(vname + DLCscorerlegacy + "_labeled.mp4")
 
     if os.path.isfile(videooutname1) or os.path.isfile(videooutname2):
-        print("Labeled video {} already created.".format(vname))
+        pass
     else:
-        print("Loading {} and data.".format(video))
         try:
             df, filepath, _, _ = auxiliaryfunctions.load_analyzed_data(
                 destfolder, vname, DLCscorer, filtered, track_method
@@ -647,7 +621,6 @@ def proc_video(
                 s = ""
             videooutname = filepath.replace(".h5", f"{s}_labeled.mp4")
             if os.path.isfile(videooutname):
-                print("Labeled video already created. Skipping...")
                 return
 
             if all(individuals):
@@ -965,7 +938,6 @@ def create_video_with_all_detections(
             )
 
         if not (os.path.isfile(outputname)):
-            print("Creating labeled video for ", str(Path(video).stem))
             h5file = full_pickle.replace("_full.pickle", ".h5")
             data, _ = auxfun_multianimal.LoadFullMultiAnimalData(h5file)
             data = dict(data)  # Cast to dict (making a copy) so items can safely be popped
@@ -1008,16 +980,17 @@ def create_video_with_all_detections(
                         rr, cc = disk((y, x), dotsize, shape=(ny, nx))
                         frame[rr, cc] = colors[bpts.index(det.label)]
                 except ValueError:  # No data stored for that particular frame
-                    print(n, "no data")
+                    # n, "no data"
                     pass
                 try:
                     clip.save_frame(frame)
                 except:
-                    print(n, "frame writing error.")
+                    # n, "frame writing error."
                     pass
             clip.close()
         else:
-            print("Detections already plotted, ", outputname)
+            # Detections already plotted, ", outputname
+            pass
 
 
 def _create_video_from_tracks(video, tracks, destfolder, output_name, pcutoff, scale=1):

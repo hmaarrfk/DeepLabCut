@@ -138,7 +138,6 @@ def get_camerawise_videos(path, cam_names, videotype):
             for name in glob.glob(os.path.join(path, str("*" + cam + "*" + videotype)))
         ]
     )  # all videos with cam
-    # print("here is what I found",vid)
     for k in range(len(vid[0])):
         if cam in str(Path(vid[0][k]).stem):
             ending = Path(vid[0][k]).suffix
@@ -146,7 +145,8 @@ def get_camerawise_videos(path, cam_names, videotype):
             suf = str(Path(vid[0][k]).stem).split(cam)[1]
             if pref == "":
                 if suf == "":
-                    print("Strange naming convention on your part. Respect.")
+                    pass
+                    # "Strange naming convention on your part. Respect."
                 else:
                     putativecam2name = os.path.join(path, cam_names[1] + suf + ending)
             else:
@@ -156,7 +156,6 @@ def get_camerawise_videos(path, cam_names, videotype):
                     putativecam2name = os.path.join(
                         path, pref + cam_names[1] + suf + ending
                     )
-            # print([os.path.join(path,pref+cam+suf+ending),putativecam2name])
             if os.path.isfile(putativecam2name):
                 # found a pair!!!
                 video_list.append(
@@ -182,7 +181,6 @@ def Get_list_of_triangulated_and_videoFiles(
         """
         Analyzes all the videos in the directory.
         """
-        print("Analyzing all the videos in the directory")
         videofolder = filepath[0]
         cwd = os.getcwd()
         os.chdir(videofolder)

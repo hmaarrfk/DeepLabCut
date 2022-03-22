@@ -352,7 +352,6 @@ def get_list_of_videos(
         if not videotype:
             videotype = auxfun_videos.SUPPORTED_VIDEOS
 
-        print("Analyzing all the videos in the directory...")
         videofolder = videos[0]
 
         # make list of full paths
@@ -385,7 +384,6 @@ def save_data(PredicteData, metadata, dataname, pdindex, imagenames, save_as_csv
     """ Save predicted data as h5 file and metadata as pickle file; created by predict_videos.py """
     DataMachine = pd.DataFrame(PredicteData, columns=pdindex, index=imagenames)
     if save_as_csv:
-        print("Saving csv poses!")
         DataMachine.to_csv(dataname.split(".h5")[0] + ".csv")
     DataMachine.to_hdf(dataname, "df_with_missing", format="table", mode="w")
     with open(dataname.split(".h5")[0] + "_meta.pickle", "wb") as f:
@@ -436,7 +434,6 @@ def get_video_list(filename, videopath, videtype):
             videos = [filename]
         else:
             videos = []
-            print("Video not found!", filename)
     return videos
 
 
@@ -564,9 +561,6 @@ def get_scorer_name(
     if trainingsiterations == "unknown":
         snapshotindex = cfg["snapshotindex"]
         if cfg["snapshotindex"] == "all":
-            print(
-                "Changing snapshotindext to the last one -- plotting, videomaking, etc. should not be performed for all indices. For more selectivity enter the ordinal number of the snapshot you want (ie. 4 for the fifth) in the config file."
-            )
             snapshotindex = -1
         else:
             snapshotindex = cfg["snapshotindex"]
@@ -626,19 +620,10 @@ def check_if_post_processing(folder, vname, DLCscorer, DLCscorerlegacy, suffix="
     outdataname = os.path.join(folder, vname + DLCscorer + suffix + ".h5")
     sourcedataname = os.path.join(folder, vname + DLCscorer + ".h5")
     if os.path.isfile(outdataname):  # was data already processed?
-        if suffix == "filtered":
-            print("Video already filtered...", outdataname)
-        elif suffix == "_skeleton":
-            print("Skeleton in video already processed...", outdataname)
-
         return False, outdataname, sourcedataname, DLCscorer
     else:
         odn = os.path.join(folder, vname + DLCscorerlegacy + suffix + ".h5")
         if os.path.isfile(odn):  # was it processed by DLC <2.1 project?
-            if suffix == "filtered":
-                print("Video already filtered...(with DLC<2.1)!", odn)
-            elif suffix == "_skeleton":
-                print("Skeleton in video already processed... (with DLC<2.1)!", odn)
             return False, odn, odn, DLCscorerlegacy
         else:
             sdn = os.path.join(folder, vname + DLCscorerlegacy + ".h5")
@@ -650,7 +635,7 @@ def check_if_post_processing(folder, vname, DLCscorer, DLCscorerlegacy, suffix="
             elif os.path.isfile(tracks):  # May be a MA project with tracklets
                 return True, tracks.replace(".h5", f"{suffix}.h5"), tracks, DLCscorer
             else:
-                print("Video not analyzed -- Run analyze_videos first.")
+                # "Video not analyzed -- Run analyze_videos first."
                 return False, outdataname, sourcedataname, DLCscorer
 
 
@@ -663,16 +648,8 @@ def check_if_not_analyzed(destfolder, vname, DLCscorer, DLCscorerlegacy, flag="v
     # Iterate over data files and stop as soon as one matching the scorer is found
     for h5file in h5files:
         if vname + DLCscorer in Path(h5file).stem:
-            if flag == "video":
-                print("Video already analyzed!", h5file)
-            elif flag == "framestack":
-                print("Frames already analyzed!", h5file)
             return False, h5file, DLCscorer
         elif vname + DLCscorerlegacy in Path(h5file).stem:
-            if flag == "video":
-                print("Video already analyzed!", h5file)
-            elif flag == "framestack":
-                print("Frames already analyzed!", h5file)
             return False, h5file, DLCscorerlegacy
 
     # If there was no match...
@@ -683,12 +660,10 @@ def check_if_not_analyzed(destfolder, vname, DLCscorer, DLCscorerlegacy, flag="v
 def check_if_not_evaluated(folder, DLCscorer, DLCscorerlegacy, snapshot):
     dataname = os.path.join(folder, DLCscorer + "-" + str(snapshot) + ".h5")
     if os.path.isfile(dataname):
-        print("This net has already been evaluated!")
         return False, dataname, DLCscorer
     else:
         dn = os.path.join(folder, DLCscorerlegacy + "-" + str(snapshot) + ".h5")
         if os.path.isfile(dn):
-            print("This net has already been evaluated (with DLC<2.1)!")
             return False, dn, DLCscorerlegacy
         else:
             return True, dataname, DLCscorer
@@ -758,10 +733,9 @@ def find_analyzed_data(folder, videoname, scorer, filtered=False, track_method="
 
     n_candidates = len(candidates)
     if n_candidates > 1:  # This should not be happening anyway...
-        print(
-            f"{n_candidates} possible data files were found: {candidates}.\n"
-            f"Picking the first by default..."
-        )
+        pass
+        # f"{n_candidates} possible data files were found: {candidates}.\n"
+        # f"Picking the first by default..."
     filepath = os.path.join(folder, candidates[0])
     scorer = scorer if scorer in filepath else scorer_legacy
     return filepath, scorer, suffix

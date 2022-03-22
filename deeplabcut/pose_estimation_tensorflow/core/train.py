@@ -95,7 +95,6 @@ def start_preloading(sess, enqueue_op, dataset, placeholders):
 def get_optimizer(loss_op, cfg):
     tstep = tf.compat.v1.placeholder(tf.int32, shape=[], name="tstep")
     if "efficientnet" in cfg["net_type"]:
-        print("Switching to cosine decay schedule with adam!")
         cfg["optimizer"] = "adam"
         learning_rate = tf.compat.v1.train.cosine_decay(
             cfg["lr_init"], tstep, cfg["decay_steps"], alpha=cfg["alpha_r"]
@@ -158,9 +157,6 @@ def train(
     cfg = load_config(config_yaml)
     net_type = cfg["net_type"]
     if cfg["dataset_type"] in ("scalecrop", "tensorpack", "deterministic"):
-        print(
-            "Switching batchsize to 1, as tensorpack/scalecrop/deterministic loaders do not support batches >1. Use imgaug/default loader."
-        )
         cfg["batch_size"] = 1  # in case this was edited for analysis.-
 
     dataset = PoseDatasetFactory.create(cfg)
@@ -176,11 +172,9 @@ def train(
 
     stem = Path(cfg["init_weights"]).stem
     if "snapshot" in stem and keepdeconvweights:
-        print("Loading already trained DLC with backbone:", net_type)
         variables_to_restore = slim.get_variables_to_restore()
         start_iter = int(stem.split("-")[1])
     else:
-        print("Loading ImageNet-pretrained", net_type)
         # loading backbone from ResNet, MobileNet etc.
         if "resnet" in net_type:
             variables_to_restore = slim.get_variables_to_restore(include=["resnet_v1"])
@@ -218,10 +212,8 @@ def train(
 
     if cfg.get("freezeencoder", False):
         if "efficientnet" in net_type:
-            print("Freezing ONLY supported MobileNet/ResNet currently!!")
             learning_rate, train_op, tstep = get_optimizer(total_loss, cfg)
 
-        print("Freezing encoder...")
         learning_rate, _, train_op = get_optimizer_with_freeze(total_loss, cfg)
     else:
         learning_rate, train_op, tstep = get_optimizer(total_loss, cfg)
@@ -236,20 +228,17 @@ def train(
     else:
         max_iter = min(int(cfg["multi_step"][-1][1]), int(maxiters))
         # display_iters = max(1,int(displayiters))
-        print("Max_iters overwritten as", max_iter)
 
     if displayiters is None:
         display_iters = max(1, int(cfg["display_iters"]))
     else:
         display_iters = max(1, int(displayiters))
-        print("Display_iters overwritten as", display_iters)
 
     if saveiters is None:
         save_iters = max(1, int(cfg["save_iters"]))
 
     else:
         save_iters = max(1, int(saveiters))
-        print("Save_iters overwritten as", save_iters)
 
     cum_loss = 0.0
     lr_gen = LearningRate(cfg)
@@ -257,9 +246,6 @@ def train(
     stats_path = Path(config_yaml).with_name("learning_stats.csv")
     lrf = open(str(stats_path), "w")
 
-    print("Training parameter:")
-    print(cfg)
-    print("Starting training....")
     max_iter += start_iter  # max_iter is relative to start_iter
     for it in range(start_iter, max_iter + 1):
         if "efficientnet" in net_type:
