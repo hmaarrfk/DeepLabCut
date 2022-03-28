@@ -15,7 +15,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.collections import LineCollection
 from skimage import io, color
-from tqdm import trange
 
 from deeplabcut.utils.auxiliaryfunctions import attempttomakefolder
 
@@ -322,7 +321,7 @@ def make_labeled_images_from_dataframe(
         pts = [ax.plot([], [], keypoint, ms=s, alpha=alpha, color=c)[0] for c in colors]
         coll = LineCollection([], colors=cfg["skeleton_color"], alpha=alpha)
         ax.add_collection(coll)
-        for i in trange(len(ic)):
+        for i in range(len(ic)):
             filename = ic.files[i]
             ind = images_list.index(filename)
             coords = xy[ind]
@@ -343,7 +342,7 @@ def make_labeled_images_from_dataframe(
         plt.close(fig)
 
     else:  # Good old inelegant way
-        for i in trange(len(ic)):
+        for i in range(len(ic)):
             filename = ic.files[i]
             ind = images_list.index(filename)
             coords = xy[ind]

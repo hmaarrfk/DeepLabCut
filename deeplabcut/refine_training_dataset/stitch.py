@@ -23,7 +23,6 @@ from pathlib import Path
 from scipy.linalg import hankel
 from scipy.spatial.distance import directed_hausdorff
 from scipy.stats import mode
-from tqdm import trange
 
 
 class Tracklet:
@@ -637,7 +636,7 @@ class TrackletStitcher:
         self.G.add_edges_from(zip(nodes_out, ["sink"] * n_nodes), capacity=1)
         if weight_func is None:
             weight_func = self.calculate_edge_weight
-        for i in trange(n_nodes):
+        for i in range(n_nodes):
             node_i = nodes[i]
             end = node_i.end
             for j in range(i + 1, n_nodes):
