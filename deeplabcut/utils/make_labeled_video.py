@@ -31,7 +31,6 @@ from matplotlib.animation import FFMpegWriter
 from matplotlib.collections import LineCollection
 from skimage.draw import disk, line_aa
 from skimage.util import img_as_ubyte
-from tqdm import trange
 
 from deeplabcut.utils import auxiliaryfunctions, auxfun_multianimal, visualization
 from deeplabcut.utils.video_processor import (
@@ -124,7 +123,7 @@ def CreateVideo(
     colors = (C[:, :3] * 255).astype(np.uint8)
 
     with np.errstate(invalid="ignore"):
-        for index in trange(min(nframes, len(Dataframe))):
+        for index in range(min(nframes, len(Dataframe))):
             image = clip.load_frame()
             if displaycropped:
                 image = image[y1:y2, x1:x2]
@@ -261,7 +260,7 @@ def CreateVideoSlow(
 
     writer = FFMpegWriter(fps=outputframerate, codec="h264")
     with writer.saving(fig, videooutname, dpi=dpi), np.errstate(invalid="ignore"):
-        for index in trange(min(nframes, len(Dataframe))):
+        for index in range(min(nframes, len(Dataframe))):
             imagename = tmpfolder + "/file" + str(index).zfill(nframes_digits) + ".png"
             image = img_as_ubyte(clip.load_frame())
             if index in Index:  # then extract the frame!
@@ -852,7 +851,7 @@ def create_video_with_keypoints_only(
     writer = FFMpegWriter(fps=fps, codec=codec)
     with writer.saving(fig, output_name, dpi=dpi):
         writer.grab_frame()
-        for index, _ in enumerate(trange(n_frames - 1), start=1):
+        for index, _ in enumerate(range(n_frames - 1), start=1):
             coords = xyp[index, :, :2]
             coords[xyp[index, :, 2] < pcutoff] = np.nan
             scat.set_offsets(coords)
@@ -963,7 +962,7 @@ def create_video_with_all_detections(
             clip = vp(fname=video, sname=outputname, codec="mp4v")
             ny, nx = clip.height(), clip.width()
 
-            for n in trange(clip.nframes):
+            for n in range(clip.nframes):
                 frame = clip.load_frame()
                 if frame is None:
                     continue
