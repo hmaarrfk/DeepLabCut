@@ -544,7 +544,7 @@ def create_labeled_video(
 
     start_path = os.getcwd()
     Videos = auxiliaryfunctions.get_list_of_videos(videos, videotype)
-
+    Videos.sort()
     if not Videos:
         return
 
@@ -942,6 +942,7 @@ def create_video_with_all_detections(
     )
 
     videos = auxiliaryfunctions.get_list_of_videos(videos, videotype)
+    videos.sort()
     if not videos:
         return
 

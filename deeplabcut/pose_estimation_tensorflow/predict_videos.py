@@ -605,6 +605,7 @@ def analyze_videos(
     # Looping over videos
     ##################################################
     Videos = auxiliaryfunctions.get_list_of_videos(videos, videotype)
+    Videos.sort()
     if len(Videos) > 0:
         if "multi-animal" in dlc_cfg["dataset_type"]:
             from deeplabcut.pose_estimation_tensorflow.predict_multianimal import (
@@ -1717,6 +1718,7 @@ def convert_detections2tracklets(
     # Looping over videos
     ##################################################
     Videos = auxiliaryfunctions.get_list_of_videos(videos, videotype)
+    Videos.sort()
     if len(Videos) > 0:
         for video in Videos:
             print("Processing... ", video)
