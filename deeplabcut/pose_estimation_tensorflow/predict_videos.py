@@ -1723,6 +1723,7 @@ def convert_detections2tracklets(
     # Looping over videos
     ##################################################
     Videos = auxiliaryfunctions.get_list_of_videos(videos, videotype)
+    Videos.sort()
     if len(Videos) > 0:
         for video in Videos:
             print("Processing... ", video)

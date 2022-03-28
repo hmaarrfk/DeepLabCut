@@ -268,6 +268,7 @@ def plot_trajectories(
         cfg, displayedindividuals
     )
     Videos = auxiliaryfunctions.get_list_of_videos(videos, videotype)
+    Videos.sort()
     if not len(Videos):
         print(
             "No videos found. Make sure you passed a list of videos and that *videotype* is right."

@@ -368,6 +368,7 @@ def extract_outlier_frames(
     )
 
     Videos = auxiliaryfunctions.get_list_of_videos(videos, videotype)
+    Videos.sort()
     if len(Videos) == 0:
         print("No suitable videos found in", videos)
 

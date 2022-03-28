@@ -199,7 +199,7 @@ def filterpredictions(
         modelprefix=modelprefix,
     )
     Videos = auxiliaryfunctions.get_list_of_videos(video, videotype)
-
+    Videos.sort()
     if not len(Videos):
         print("No video(s) were found. Please check your paths and/or 'videotype'.")
         return

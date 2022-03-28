@@ -1090,7 +1090,8 @@ def stitch_tracklets(
     -------
     A TrackletStitcher object
     """
-    vids = deeplabcut.utils.auxiliaryfunctions.get_list_of_videos(videos, videotype)
+    vids = auxiliaryfunctions.get_list_of_videos(videos, videotype)
+    vids.sort()
     if not vids:
         print("No video(s) found. Please check your path!")
         return

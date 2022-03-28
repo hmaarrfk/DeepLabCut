@@ -246,6 +246,7 @@ def analyzeskeleton(
     )
 
     Videos = auxiliaryfunctions.get_list_of_videos(videos, videotype)
+    Videos.sort()
     for video in Videos:
         print("Processing %s" % (video))
         if destfolder is None:
