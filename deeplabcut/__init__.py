@@ -68,14 +68,8 @@ from deeplabcut.utils import (
 
 try:
     from deeplabcut.pose_tracking_pytorch import transformer_reID
-except ModuleNotFoundError as e:
-    import warnings
-    warnings.warn(
-        """
-        As PyTorch is not installed, unsupervised identity learning will not be available.
-        Please run `pip install torch`, or ignore this warning.
-        """
-    )
+except ModuleNotFoundError:
+    pass
 
 from deeplabcut.utils.auxfun_videos import (
     ShortenVideo,
