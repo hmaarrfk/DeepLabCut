@@ -1,6 +1,7 @@
+(single-animal-userguide)=
 # DeepLabCut User Guide (for single animal projects)
 
-This document covers single/standard DeepLabCut use. If you have a complicated multi-animal scenario (i.e., they look the same), then please see our [maDLC user guide](https://deeplabcut.github.io/DeepLabCut/docs/maDLC_UserGuide.html).
+This document covers single/standard DeepLabCut use. If you have a complicated multi-animal scenario (i.e., they look the same), then please see our [maDLC user guide](multi-animal-userguide).
 
 To get started, you can use the GUI, or the terminal. See below.
 
@@ -157,6 +158,13 @@ HOT KEYS IN THE Labeling GUI (also see "help" in GUI):
 Ctrl + C: Copy labels from previous frame. With multi-animal DLC, only the keypoints of the animal currently selected are duplicated.
 Keyboard arrows: advance frames
 delete key: delete label
+```
+
+#### API Docs
+```{admonition} Click the button to see API Docs
+:class: dropdown
+```{eval-rst}
+.. include:: ./api/deeplabcut.label_frames.rst
 ```
 
 ###  (E) Check Annotated Frames
@@ -589,6 +597,12 @@ Now you can run ``create_training_dataset``, then ``train_network``, etc. If you
 
 If after training the network generalizes well to the data, proceed to analyze new videos. Otherwise, consider labeling more data.
 
+#### API Docs for deeplabcut.refine_labels
+```{admonition} Click the button to see API Docs
+:class: dropdown
+```{eval-rst}
+.. include:: ./api/deeplabcut.refine_labels.rst
+```
 
 #### API Docs for deeplabcut.merge_datasets
 ```{admonition} Click the button to see API Docs
@@ -605,13 +619,14 @@ template for the user to develop a project. Furthermore, we provide a notebook f
 labeled data. The example project, named as Reaching-Mackenzie-2018-08-30 consists of a project configuration file
 with default parameters and 20 images, which are cropped around the region of interest as an example dataset. These
 images are extracted from a video, which was recorded in a study of skilled motor control in mice. Some example
-labels for these images are also provided. See more details [here]((https://github.com/DeepLabCut/DeepLabCut/blob/master/examples).
+labels for these images are also provided. See more details [here](https://github.com/DeepLabCut/DeepLabCut/blob/master/examples).
 
 ## 3D Toolbox
 
-Please find all the information on using the 3D toolbox of DeepLabCut (as of 2.0.7+) here: https://github.com/DeepLabCut/DeepLabCut/blob/master/docs/Overviewof3D.md
-
+Please see [3D overview](3D-overview) for information on using the 3D toolbox of
+DeepLabCut (as of 2.0.7+).
 
 ## Other functions, some are yet-to-be-documented:
 
-We suggest you [check out these additional helper functions]((https://github.com/DeepLabCut/DeepLabCut/blob/master/docs/HelperFunctions.md), that could be useful (they are all optional).
+We suggest you [check out these additional helper functions](helper-functions), that
+could be useful (they are all optional).
