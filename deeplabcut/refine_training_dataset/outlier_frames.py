@@ -357,8 +357,7 @@ def extract_outlier_frames(
     )
 
     Videos = auxiliaryfunctions.get_list_of_videos(videos, videotype)
-    if len(Videos) == 0:
-        print("No suitable videos found in", videos)
+    Videos.sort()
 
     for video in Videos:
         if destfolder is None:
@@ -421,13 +420,6 @@ def extract_outlier_frames(
             # Run always except when the outlieralgorithm == manual.
             if not outlieralgorithm == "manual":
                 Indices = np.sort(list(set(Indices)))  # remove repetitions.
-                print(
-                    "Method ",
-                    outlieralgorithm,
-                    " found ",
-                    len(Indices),
-                    " putative outlier frames.",
-                )
                 print(
                     "Do you want to proceed with extracting ",
                     cfg["numframes2pick"],
@@ -542,7 +534,6 @@ def compute_deviations(
     """Fits Seasonal AutoRegressive Integrated Moving Average with eXogenous regressors model to data and computes confidence interval
     as well as mean fit."""
 
-    print("Fitting state-space models with parameters:", ARdegree, MAdegree)
     df_x, df_y, df_likelihood = Dataframe.values.reshape((Dataframe.shape[0], -1, 3)).T
     preds = []
     for row in range(len(df_x)):
@@ -615,12 +606,12 @@ def ExtractFramesbasedonPreselection(
     vname = str(Path(video).stem)
     tmpfolder = os.path.join(cfg["project_path"], "labeled-data", vname)
     if os.path.isdir(tmpfolder):
-        print("Frames from video", vname, " already extracted (more will be added)!")
+        pass
+        # "Frames from video", vname, " already extracted (more will be added)!"
     else:
         auxiliaryfunctions.attempttomakefolder(tmpfolder, recursive=True)
 
     nframes = len(data)
-    print("Loading video...")
     if opencv:
         vid = VideoWriter(video)
         fps = vid.fps
@@ -637,8 +628,6 @@ def ExtractFramesbasedonPreselection(
     else:
         coords = None
 
-    print("Duration of video [s]: ", duration, ", recorded @ ", fps, "fps!")
-    print("Overall # of frames: ", nframes, "with (cropped) frame dimensions: ")
     if extractionalgorithm == "uniform":
         if opencv:
             frames2pick = frameselectiontools.UniformFramescv2(
@@ -675,13 +664,9 @@ def ExtractFramesbasedonPreselection(
             )
 
     else:
-        print(
-            "Please implement this method yourself! Currently the options are 'kmeans', 'jump', 'uniform'."
-        )
         frames2pick = []
 
     # Extract frames + frames with plotted labels and store them in folder (with name derived from video name) nder labeled-data
-    print("Let's select frames indices:", frames2pick)
     colors = visualization.get_cmap(len(bodyparts), cfg["colormap"])
     strwidth = int(np.ceil(np.log10(nframes)))  # width for strings
     for index in frames2pick:  ##tqdm(range(0,nframes,10)):
@@ -734,10 +719,6 @@ def ExtractFramesbasedonPreselection(
             else:
                 add.add_new_videos(config, [video], coords=None)
         except:  # can we make a catch here? - in fact we should drop indices from DataCombined if they are in CollectedData.. [ideal behavior; currently this is pretty unlikely]
-            print(
-                "AUTOMATIC ADDING OF VIDEO TO CONFIG FILE FAILED! You need to do this manually for including it in the config.yaml file!"
-            )
-            print("Videopath:", video, "Coordinates for cropping:", coords)
             pass
 
         if with_annotations:
@@ -814,15 +795,8 @@ def ExtractFramesbasedonPreselection(
                 df.to_hdf(machinefile, key="df_with_missing", mode="w")
                 df.to_csv(os.path.join(tmpfolder, "machinelabels.csv"))
 
-        print(
-            "The outlier frames are extracted. They are stored in the subdirectory labeled-data\%s."
-            % vname
-        )
-        print(
-            "Once you extracted frames for all videos, use 'refine_labels' to manually correct the labels."
-        )
     else:
-        print("No frames were extracted.")
+        pass
 
 
 def PlottingSingleFrame(
@@ -922,7 +896,6 @@ def PlottingSingleFramecv2(
         cap.set_to_frame(index)
         frame = cap.read_frame()
         if frame is None:
-            print("Frame could not be read.")
             return
         image = img_as_ubyte(frame)
         if crop:
@@ -1015,7 +988,6 @@ def merge_datasets(config, forceiterate=None):
         ):  # Folder that contains human data set...
             pass
         else:
-            print("The following folder was not manually refined,...", folder)
             flagged = True
             pass  # this folder does not contain a MachineLabelsRefine file (not updated...)
 
@@ -1028,17 +1000,9 @@ def merge_datasets(config, forceiterate=None):
             cfg["iteration"] = forceiterate
 
         auxiliaryfunctions.write_config(config, cfg)
-
-        print(
-            "Merged data sets and updated refinement iteration to "
-            + str(cfg["iteration"])
-            + "."
-        )
-        print(
-            "Now you can create a new training set for the expanded annotated images (use create_training_dataset)."
-        )
     else:
-        print("Please label, or remove the un-corrected folders.")
+        # "Please label, or remove the un-corrected folders."
+        pass
 
 
 if __name__ == "__main__":

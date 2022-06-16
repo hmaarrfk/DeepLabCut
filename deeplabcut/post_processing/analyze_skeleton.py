@@ -246,8 +246,8 @@ def analyzeskeleton(
     )
 
     Videos = auxiliaryfunctions.get_list_of_videos(videos, videotype)
+    Videos.sort()
     for video in Videos:
-        print("Processing %s" % (video))
         if destfolder is None:
             destfolder = str(Path(video).parents[0])
 
@@ -258,7 +258,6 @@ def analyzeskeleton(
             )
             output_name = filepath.replace(".h5", f"_skeleton.h5")
             if os.path.isfile(output_name):
-                print(f"Skeleton in video {vname} already processed. Skipping...")
                 continue
 
             bones = {}

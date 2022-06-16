@@ -4,7 +4,6 @@ import pickle
 import re
 from deeplabcut.post_processing import columnwise_spline_interp
 from deeplabcut.utils.auxiliaryfunctions import read_config
-from tqdm import trange
 
 
 class TrackletManager:
@@ -98,7 +97,7 @@ class TrackletManager:
             tracklets_single = np.full(
                 (self.nframes, len(bodyparts_single) * 3), np.nan, np.float16
             )
-            for _ in trange(len(tracklets_sorted)):
+            for _ in range(len(tracklets_sorted)):
                 tracklet = tracklets_sorted.pop()
                 inds, temp = zip(*[(get_frame_ind(k), v) for k, v in tracklet.items()])
                 inds = np.asarray(inds)
