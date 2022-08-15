@@ -15,14 +15,18 @@ from collections import defaultdict
 from filterpy.common import kinematic_kf
 from filterpy.kalman import KalmanFilter
 from matplotlib import patches
-from numba import jit
-from numba.core.errors import NumbaPerformanceWarning
+try:
+    from numba import jit
+    from numba.core.errors import NumbaPerformanceWarning
+    warnings.simplefilter("ignore", category=NumbaPerformanceWarning)
+except ImportError:
+    def jit(*args, **kwargs):
+        def deco(fun):
+            return fun
+        return deco
 from scipy.optimize import linear_sum_assignment
 from scipy.stats import mode
-from tqdm import tqdm
 
-
-warnings.simplefilter("ignore", category=NumbaPerformanceWarning)
 
 TRACK_METHODS = {
     "box": "_bx",
@@ -787,7 +791,7 @@ def reconstruct_all_ellipses(data, sd):
     fitter = EllipseFitter(sd)
     for n, animal in enumerate(animals):
         data = xy.xs(animal, axis=1, level="individuals").values.reshape((nrows, -1, 2))
-        for i, coords in enumerate(tqdm(data)):
+        for i, coords in enumerate(data):
             el = fitter.fit(coords.astype(np.float64))
             if el is not None:
                 ellipses[n, i] = el.parameters
@@ -810,7 +814,7 @@ def _track_individuals(
 
     tracklets = defaultdict(dict)
     all_hyps = dict()
-    for i, (multi, single) in enumerate(tqdm(individuals)):
+    for i, (multi, single) in enumerate(individuals):
         if single is not None:
             tracklets["single"][i] = single
         if multi is None:
