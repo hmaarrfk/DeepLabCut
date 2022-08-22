@@ -21,7 +21,7 @@
     href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
@@ -37,7 +37,7 @@
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
-    <script src="../_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
@@ -657,7 +657,7 @@ title="Print to PDF"
 <section id="step-2-please-use-our-supplied-anaconda-environment">
 <h3>Step 2: please use our supplied Anaconda environment<a class="headerlink" href="#step-2-please-use-our-supplied-anaconda-environment" title="Permalink to this headline">#</a></h3>
 <ul class="simple">
-<li><p><strong>Click <a class="reference external" href="http://www.mackenziemathislab.org/s/DEEPLABCUT.yaml">HERE</a> to download the conda file!</strong>
+<li><p><strong>Click <a class="reference external" href="https://www.mackenziemathislab.org/s/DEEPLABCUT.yaml">HERE</a> to download the conda file!</strong>
 (or you can grab from github: git clone this repo (in the terminal/cmd program, while <strong>in a folder</strong> you wish to place DeepLabCut
 To git clone type: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/DeepLabCut/DeepLabCut.git</span></code>). Note, this can be anywhere, even downloads is fine)</p></li>
 <li><p>Now, in Terminal (or Anaconda Command Prompt for windows users), go to the folder where you downloaded the file.
@@ -666,14 +666,19 @@ For example, if you downloaded it from The CLICK HERE above, it likely went into
 <p>If you cloned the repo onto your Desktop, the command may look like:</p>
 <p><code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">C:\Users\YourUserName\Desktop\DeepLabCut\conda-environments</span></code></p>
 <p>To get the location right, a cool trick is to drag the folder and drop it into Terminal. Alternatively, you can (on Windows) hold SHIFT and right-click &gt; Copy as path, or (on Mac) right-click and while in the menu press the OPTION key to reveal Copy as Pathname.</p>
-<p>(C) Now, in the terminal run:</p>
-<p><code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">env</span> <span class="pre">create</span> <span class="pre">-f</span> <span class="pre">DEEPLABCUT.yaml</span></code></p>
-<p>(D) You can now use this environment from anywhere on your comptuer (i.e. no need to go back into the conda- folder). Just enter your environment by running:</p>
 <ul class="simple">
+<li><p>Now, in the terminal run:</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">env</span> <span class="pre">create</span> <span class="pre">-f</span> <span class="pre">DEEPLABCUT.yaml</span></code></p>
+<ul class="simple">
+<li><p>You can now use this environment from anywhere on your comptuer (i.e. no need to go back into the conda- folder). Just enter your environment by running:</p>
+<ul>
 <li><p>Ubuntu/MacOS: <code class="docutils literal notranslate"><span class="pre">source/conda</span> <span class="pre">activate</span> <span class="pre">nameoftheenv</span></code> (i.e. on your Mac: <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">activate</span> <span class="pre">DEEPLABCUT</span></code>)</p></li>
 <li><p>Windows: <code class="docutils literal notranslate"><span class="pre">activate</span> <span class="pre">nameoftheenv</span></code> (i.e. <code class="docutils literal notranslate"><span class="pre">activate</span> <span class="pre">DEEPLABCUT</span></code>)</p></li>
 </ul>
-<p>Now you should see (<code class="docutils literal notranslate"><span class="pre">nameofenv</span></code>) on the left of your teminal screen, i.e. <code class="docutils literal notranslate"><span class="pre">(DEEPLABCUT)</span> <span class="pre">YourName-MacBook...</span></code>
+</li>
+</ul>
+<p>Now you should see (<code class="docutils literal notranslate"><span class="pre">nameofenv</span></code>) on the left of your terminal screen, i.e. <code class="docutils literal notranslate"><span class="pre">(DEEPLABCUT)</span> <span class="pre">YourName-MacBook...</span></code>
 NOTE: no need to run pip install deeplabcut, as it is already installed!!! :)</p>
 <p><strong>Great, that’s it! DeepLabCut is installed!</strong></p>
 <p>Next, <a class="reference external" href="https://deeplabcut.github.io/DeepLabCut/docs/README.html">head over to the Docs to decide which mode to use DeepLabCut in. You have both standard and multi-animal installed.</a></p>

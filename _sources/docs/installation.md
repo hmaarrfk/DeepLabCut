@@ -29,7 +29,7 @@ DeepLabCut can be run on Windows, Linux, or MacOS (see also [technical considera
 
 ### Step 2: please use our supplied Anaconda environment
 
-- **Click [HERE](http://www.mackenziemathislab.org/s/DEEPLABCUT.yaml) to download the conda file!**
+- **Click [HERE](https://www.mackenziemathislab.org/s/DEEPLABCUT.yaml) to download the conda file!**
 (or you can grab from github: git clone this repo (in the terminal/cmd program, while **in a folder** you wish to place DeepLabCut
 To git clone type: ``git clone https://github.com/DeepLabCut/DeepLabCut.git``). Note, this can be anywhere, even downloads is fine)
 
@@ -42,17 +42,16 @@ If you cloned the repo onto your Desktop, the command may look like:
 
 To get the location right, a cool trick is to drag the folder and drop it into Terminal. Alternatively, you can (on Windows) hold SHIFT and right-click > Copy as path, or (on Mac) right-click and while in the menu press the OPTION key to reveal Copy as Pathname.
 
-(C) Now, in the terminal run:
+- Now, in the terminal run:
 
 ``conda env create -f DEEPLABCUT.yaml``
 
 
-(D) You can now use this environment from anywhere on your comptuer (i.e. no need to go back into the conda- folder). Just enter your environment by running:
+- You can now use this environment from anywhere on your comptuer (i.e. no need to go back into the conda- folder). Just enter your environment by running:
+     - Ubuntu/MacOS: ``source/conda activate nameoftheenv`` (i.e. on your Mac: ``conda activate DEEPLABCUT``)
+     - Windows: ``activate nameoftheenv`` (i.e. ``activate DEEPLABCUT``)
 
-- Ubuntu/MacOS: ``source/conda activate nameoftheenv`` (i.e. on your Mac: ``conda activate DEEPLABCUT``)
-- Windows: ``activate nameoftheenv`` (i.e. ``activate DEEPLABCUT``)
-
-Now you should see (`nameofenv`) on the left of your teminal screen, i.e. ``(DEEPLABCUT) YourName-MacBook...``
+Now you should see (`nameofenv`) on the left of your terminal screen, i.e. ``(DEEPLABCUT) YourName-MacBook...``
 NOTE: no need to run pip install deeplabcut, as it is already installed!!! :)
 
 **Great, that's it! DeepLabCut is installed!**
