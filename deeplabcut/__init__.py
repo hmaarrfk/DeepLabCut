@@ -18,8 +18,6 @@ DEBUG = True and "DEBUG" in os.environ and os.environ["DEBUG"]
 from deeplabcut import DEBUG
 from deeplabcut.version import __version__, VERSION
 
-print(f"Loading DLC {VERSION}...")
-
 try:
     from deeplabcut import generate_training_dataset
     from deeplabcut import refine_training_dataset
@@ -32,9 +30,7 @@ try:
 
     from deeplabcut.utils.skeleton import SkeletonBuilder
 except (ModuleNotFoundError, ImportError):
-    print(
-        "DLC loaded in light mode; you cannot use any GUI (labeling, relabeling and standalone GUI)"
-    )
+    pass
 
 from deeplabcut.create_project import (
     create_new_project,
