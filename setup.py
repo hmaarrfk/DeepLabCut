@@ -50,7 +50,6 @@ setuptools.setup(
         "openvino": ["openvino-dev==2022.1.0"],
         "docs": ["numpydoc"],
     },
-    scripts=["deeplabcut/pose_estimation_tensorflow/models/pretrained/download.sh"],
     packages=setuptools.find_packages(),
     data_files=[
         (
