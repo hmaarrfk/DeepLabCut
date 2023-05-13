@@ -10,7 +10,7 @@
 #
 import deeplabcut
 from qtpy import QtWidgets
-from qtpy.QtCore import Qt, Signal, QTimer
+from qtpy.QtCore import Qt, Signal, QTimer, QRegularExpression
 from qtpy.QtGui import QRegularExpressionValidator
 from deeplabcut.gui.components import (
     DefaultTab,
@@ -33,7 +33,7 @@ class RegExpValidator(QRegularExpressionValidator):
 class ModelZoo(DefaultTab):
     def __init__(self, root, parent, h1_description):
         super().__init__(root, parent, h1_description)
-        self._val_pattern = "(\d{3,5},\s*)+\d{3,5}"
+        self._val_pattern = QRegularExpression(r"(\d{3,5},\s*)+\d{3,5}")
         self._set_page()
 
     @property
