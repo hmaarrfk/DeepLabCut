@@ -10,8 +10,8 @@
 #
 from functools import partial
 
-from PySide6 import QtWidgets
-from PySide6.QtCore import Qt
+from qtpy import QtWidgets
+from qtpy.QtCore import Qt
 
 from deeplabcut.gui.dlc_params import DLCParams
 from deeplabcut.gui.components import (

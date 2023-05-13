@@ -16,7 +16,7 @@ from deeplabcut.utils import auxiliaryfunctions
 from deeplabcut.gui.dlc_params import DLCParams
 from deeplabcut.gui.widgets import ClickableLabel, ItemSelectionFrame
 
-from PySide6 import QtCore, QtWidgets
+from qtpy import QtCore, QtWidgets
 
 
 class ProjectCreator(QtWidgets.QDialog):

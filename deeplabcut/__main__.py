@@ -10,7 +10,7 @@
 #
 
 try:
-    import PySide6
+    import qtpy
 
     lite = False
 except ModuleNotFoundError:

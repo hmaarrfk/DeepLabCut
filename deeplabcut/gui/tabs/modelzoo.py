@@ -9,9 +9,9 @@
 # Licensed under GNU Lesser General Public License v3.0
 #
 import deeplabcut
-from PySide6 import QtWidgets
-from PySide6.QtCore import Qt, Signal, QTimer
-from PySide6.QtGui import QRegularExpressionValidator
+from qtpy import QtWidgets
+from qtpy.QtCore import Qt, Signal, QTimer
+from qtpy.QtGui import QRegularExpressionValidator
 from deeplabcut.gui.components import (
     DefaultTab,
     VideoSelectionWidget,

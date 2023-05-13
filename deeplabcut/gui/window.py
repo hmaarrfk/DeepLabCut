@@ -22,11 +22,11 @@ from deeplabcut import auxiliaryfunctions, VERSION
 from deeplabcut.gui import BASE_DIR, components, utils
 from deeplabcut.gui.tabs import *
 from deeplabcut.gui.widgets import StreamReceiver, StreamWriter
-from PySide6.QtWidgets import QMenu, QWidget, QMainWindow
-from PySide6 import QtCore
-from PySide6.QtGui import QIcon, QAction
-from PySide6 import QtWidgets, QtGui
-from PySide6.QtCore import Qt
+from qtpy.QtWidgets import QMenu, QWidget, QMainWindow
+from qtpy import QtCore
+from qtpy.QtGui import QIcon, QAction
+from qtpy import QtWidgets, QtGui
+from qtpy.QtCore import Qt
 
 
 def _check_for_updates():

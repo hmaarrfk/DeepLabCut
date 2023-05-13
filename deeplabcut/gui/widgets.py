@@ -25,8 +25,8 @@ from matplotlib.backends.backend_qt5agg import (
 from matplotlib.figure import Figure
 from matplotlib.widgets import RectangleSelector, Button, LassoSelector
 from queue import Queue
-from PySide6 import QtCore, QtWidgets
-from PySide6.QtGui import QStandardItemModel, QStandardItem, QCursor, QAction
+from qtpy import QtCore, QtWidgets
+from qtpy.QtGui import QStandardItemModel, QStandardItem, QCursor, QAction
 from scipy.spatial import cKDTree as KDTree
 from skimage import io
 
