@@ -26,7 +26,7 @@ from deeplabcut.gui import BASE_DIR
 
 
 def launch_dlc():
-    os.environ['QT_API'] = os.environ.get('QT_API', 'PySide6')
+    os.environ['QT_API'] = os.environ.get('QT_API', 'PySide2')
     # LazyImport so as not to trigger things here
     import qtpy.QtWidgets as QtWidgets
     from qtpy.QtCore import Qt
