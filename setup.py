@@ -61,7 +61,6 @@ setuptools.setup(
         "apple_mchips": ["tensorflow-macos<2.13.0", "tensorflow-metal"],
         "modelzoo": ["huggingface_hub"],
     },
-    scripts=["deeplabcut/pose_estimation_tensorflow/models/pretrained/download.sh"],
     packages=setuptools.find_packages(),
     data_files=[
         (
