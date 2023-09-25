@@ -19,7 +19,6 @@ tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 DEBUG = True and "DEBUG" in os.environ and os.environ["DEBUG"]
 from deeplabcut.version import __version__, VERSION
 
-print(f"Loading DLC {VERSION}...")
 
 try:
     from deeplabcut.gui.tracklet_toolbox import refine_tracklets
@@ -30,9 +29,7 @@ try:
     )
     from deeplabcut.gui.widgets import SkeletonBuilder
 except (ModuleNotFoundError, ImportError):
-    print(
-        "DLC loaded in light mode; you cannot use any GUI (labeling, relabeling and standalone GUI)"
-    )
+    pass
 
 from deeplabcut.create_project import (
     create_new_project,
