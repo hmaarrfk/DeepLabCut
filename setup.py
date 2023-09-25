@@ -66,7 +66,6 @@ setuptools.setup(
         ],
         "modelzoo": ["huggingface_hub"],
     },
-    scripts=["deeplabcut/pose_estimation_tensorflow/models/pretrained/download.sh"],
     packages=setuptools.find_packages(),
     data_files=[
         (
