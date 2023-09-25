@@ -22,14 +22,15 @@ import sys
 import os
 import logging
 
-import qtpy.QtWidgets as QtWidgets
-import qdarkstyle
 from deeplabcut.gui import BASE_DIR
-from qtpy.QtCore import Qt
-from qtpy.QtGui import QIcon, QPixmap
 
 
 def launch_dlc():
+    import qtpy.QtWidgets as QtWidgets
+    from qtpy.QtCore import Qt
+    from qtpy.QtGui import QIcon, QPixmap
+    import qdarkstyle
+
     app = QtWidgets.QApplication(sys.argv)
     app.setWindowIcon(QIcon(os.path.join(BASE_DIR, "assets", "logo.png")))
     screen_size = app.screens()[0].size()
