@@ -17,13 +17,7 @@ from deeplabcut.version import __version__, VERSION
 
 
 try:
-    from deeplabcut.gui.tracklet_toolbox import refine_tracklets
     from deeplabcut.gui.launch_script import launch_dlc
-    from deeplabcut.gui.tabs.label_frames import (
-        label_frames,
-        refine_labels,
-    )
-    from deeplabcut.gui.widgets import SkeletonBuilder
 except (ModuleNotFoundError, ImportError):
     pass
 
