@@ -22,11 +22,11 @@ import sys
 import os
 import logging
 
-import PySide6.QtWidgets as QtWidgets
+import qtpy.QtWidgets as QtWidgets
 import qdarkstyle
 from deeplabcut.gui import BASE_DIR
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QIcon, QPixmap
+from qtpy.QtCore import Qt
+from qtpy.QtGui import QIcon, QPixmap
 
 
 def launch_dlc():

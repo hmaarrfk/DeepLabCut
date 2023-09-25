@@ -8,7 +8,7 @@
 #
 # Licensed under GNU Lesser General Public License v3.0
 #
-from PySide6 import QtCore
+from qtpy import QtCore
 
 
 class Worker(QtCore.QObject):

@@ -12,9 +12,10 @@ import os
 from functools import partial
 
 import deeplabcut
-from PySide6 import QtWidgets
-from PySide6.QtCore import Qt, Signal, QTimer, QRegularExpression
-from PySide6.QtGui import QPixmap, QRegularExpressionValidator
+from qtpy import QtWidgets
+from qtpy.QtCore import Qt, Signal, QTimer, QRegularExpression
+from qtpy.QtGui import QPixmap, QRegularExpressionValidator
+
 from deeplabcut.gui.components import (
     DefaultTab,
     VideoSelectionWidget,

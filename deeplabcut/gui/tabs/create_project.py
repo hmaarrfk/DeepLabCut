@@ -17,8 +17,8 @@ from deeplabcut.gui import BASE_DIR
 from deeplabcut.gui.dlc_params import DLCParams
 from deeplabcut.gui.widgets import ClickableLabel, ItemSelectionFrame
 
-from PySide6 import QtCore, QtWidgets
-from PySide6.QtGui import QIcon
+from qtpy import QtCore, QtWidgets
+from qtpy.QtGui import QIcon
 
 
 class ProjectCreator(QtWidgets.QDialog):
