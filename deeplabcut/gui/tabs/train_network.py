@@ -11,9 +11,9 @@
 import os
 from pathlib import Path
 
-from PySide6 import QtWidgets
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QIcon
+from qtpy import QtWidgets
+from qtpy.QtCore import Qt
+from qtpy.QtGui import QIcon
 
 from deeplabcut.gui.components import (
     DefaultTab,

@@ -10,9 +10,9 @@
 #
 import os
 
-from PySide6 import QtWidgets, QtCore
-from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QCheckBox
+from qtpy import QtWidgets, QtCore
+from qtpy.QtGui import QIcon
+from qtpy.QtWidgets import QCheckBox
 
 
 class OpenProject(QtWidgets.QDialog):

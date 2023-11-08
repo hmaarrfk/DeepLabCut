@@ -12,27 +12,14 @@
 
 import os
 
-# Suppress tensorflow warning messages
-import tensorflow as tf
-
-tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 DEBUG = True and "DEBUG" in os.environ and os.environ["DEBUG"]
 from deeplabcut.version import __version__, VERSION
 
-print(f"Loading DLC {VERSION}...")
 
 try:
-    from deeplabcut.gui.tracklet_toolbox import refine_tracklets
     from deeplabcut.gui.launch_script import launch_dlc
-    from deeplabcut.gui.tabs.label_frames import (
-        label_frames,
-        refine_labels,
-    )
-    from deeplabcut.gui.widgets import SkeletonBuilder
 except (ModuleNotFoundError, ImportError):
-    print(
-        "DLC loaded in light mode; you cannot use any GUI (labeling, relabeling and standalone GUI)"
-    )
+    pass
 
 from deeplabcut.create_project import (
     create_new_project,
@@ -75,14 +62,7 @@ from deeplabcut.utils import (
 try:
     from deeplabcut.pose_tracking_pytorch import transformer_reID
 except ModuleNotFoundError as e:
-    import warnings
-
-    warnings.warn(
-        """
-        As PyTorch is not installed, unsupervised identity learning will not be available.
-        Please run `pip install torch`, or ignore this warning.
-        """
-    )
+    pass
 
 from deeplabcut.utils.auxfun_videos import (
     ShortenVideo,

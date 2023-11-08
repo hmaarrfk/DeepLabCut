@@ -20,8 +20,8 @@ from deeplabcut.utils.auxfun_videos import VideoReader
 from deeplabcut.utils.auxiliaryfunctions import attempt_to_make_folder
 from matplotlib.path import Path
 from matplotlib.widgets import Slider, LassoSelector, Button, CheckButtons
-from PySide6.QtWidgets import QMessageBox
-from PySide6.QtCore import QMutex
+from qtpy.QtWidgets import QMessageBox
+from qtpy.QtCore import QMutex
 
 
 class DraggablePoint:
