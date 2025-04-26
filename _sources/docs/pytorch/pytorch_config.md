@@ -26,6 +26,7 @@ runner:  # configuring the runner used for training
 train_settings:  # generic training settings, such as batch size and maximum number of epochs
   ...
 logger:  # optional: the configuration for a logger if you want one
+resume_training_from:  # optional: restart the training at the specific checkpoint
 ```
 
 ## Sections
@@ -46,6 +47,9 @@ need to be trained on CPU, while others like ResNets can take advantage of the G
 
 The data section configures:
 
+- `bbox_margin`: The margin (in pixels) to add around ground truth pose when generating
+bounding boxes. For more information, see [generating bounding boxes from pose](
+#bbox-from-pose).
 - `colormode`: in which format images are given to the model (e.g., `RGB`, `BGR`)
 - `inference`: which transformations should be applied to images when running evaluation
 or inference
@@ -55,63 +59,25 @@ The default configuration for a pose model is:
 
 ```yaml
 data:
+  bbox_margin: 20
   colormode: RGB  # should never be changed
   inference:  # the augmentations to apply to images during inference 
     normalize_images: true  # this should always be set to true
   train:
     affine:
-      p: 0.9
+      p: 0.5
       rotation: 30
-      translation: 40
-    collate:  # rescales the images when putting them in a batch
-      type: ResizeFromDataSizeCollate
-      min_scale: 0.4
-      max_scale: 1.0
-      min_short_side: 128
-      max_short_side: 1152
-      multiple_of: 32
-      to_square: false
+      scaling: [0.5, 1.25]
+      translation: 0
     covering: true
+    crop_sampling:
+      width: 448   # if your images are very small or very large, you may need to edit!
+      height: 448  # see below for more information about crop_sampling! 
+      max_shift: 0.1
+      method: hybrid
     gaussian_noise: 12.75
-    hist_eq: true
     motion_blur: true
     normalize_images: true  # this should always be set to true
-```
-
-One of the most important elements is the `collate` configuration. If all images in your
-dataset have the same size, then it doesn't necessarily need to be added (but might 
-still be beneficial). But if you have images of different sizes, then you'll need to 
-define a way of "combining" these images into a single tensor of shape `(B, 3, H, W)`.
-The default way to do this is to use the `ResizeFromDataSizeCollate` collate function 
-(other collate functions are defined in 
-`deeplabcut/pose_estimation_pytorch/data/collate.py`). For each batch to collate, this
-implementation:
-1. Selects the target width & height all images will be resized to by getting the size 
-of the first image in the batch, and multiplying it by a scale sampled uniformly at 
-random from `(min_scale, max_scale)`.
-2. Resizes all images in the batch (while preserving their aspect ratio) such that they 
-are the smallest size such that the target size fits entirely in the image.
-3. Crops each resulting image into the target size with a random crop.
-
-**Collate**: Defines how images are collated into batches.
-
-```yaml
-collate:  # rescales the images when putting them in a batch
-  type: ResizeFromDataSizeCollate  # You can also use `ResizeFromListCollate`
-  max_shift: 10  # the maximum shift, in pixels, to add to the random crop (this means
-    # there can be a slight border around the image)
-  max_size: 1024  #  the maximum size of the long edge of the image when resized. If the
-    # longest side will be greater than this value, resizes such that the longest side 
-    # is this size, and the shortest side is smaller than the desired size. This is 
-    # useful to keep some information from images with extreme aspect ratios.
-  min_scale: 0.4  # the minimum scale to resize the image with
-  max_scale: 1.0  # the maximum scale to resize the image with
-  min_short_side: 128  # the minimum size of the target short side
-  max_short_side: 1152  # the maximum size of the target short side
-  multiple_of: 32  # pads the target height, width such that they are multiples of 32
-  to_square: false  # instead of using the aspect ratio of the first image, only the 
-    # short side of the first image will be used to sample a "side", and the images will
-    # be cropped in squares
 ```
 
 The following transformations are available for the `train` and `inference` keys.
@@ -165,16 +131,21 @@ the noise will be set as 12.75).
 gaussian_noise: 12.75  # bool, float: add gaussian noise
 ```
 
-
 **Horizontal Flips**: This flips the image horizontally around the y-axis. As the 
 resulting image is mirrored, it does not preserve labels (the left hand would become the
-right hand, and vice-versa). This augmentation should not be used for pose models if you
-have symmetric keypoints! However, it is safe to use it to train detectors.
+right hand, and vice versa). This augmentation should not be used for pose models if you
+have symmetric keypoints! However, it is safe to use it to train detectors. If you want
+to use horizontal flips with symmetric keypoints, you need to specify them through the 
+`symmetries` parameter!
 
 ```yaml
-# if float > 0, the probability of applying a horizontal flip
-# if true, applies a horizontal flip with probability 0.5
-hflip: true  # bool, float
+# augmentation for object detectors or when no symmetric (left/right) keypoints exist: 
+hflip: true
+
+# augmentation if your bodyparts are [snout, eye_L, eye_R, ear_L, ear_R]
+hflip:
+  p: 0.5  # apply a horizontal flip with 50% probability
+  symmetries: [[1, 2], [3, 4]]  # the indices of symmetric keypoints
 ```
 
 **Histogram Equalization**: Applies histogram equalization with probability 50%.
@@ -189,10 +160,82 @@ hist_eq: true  # bool: whether to apply histogram equalization
 motion_blur: true  # bool: whether to apply motion blur
 ```
 
-**Normalization**
+**Normalization**: This should always be set to `true`.
 
 ```yaml
 normalize_images: true  # normalizes images
+```
+
+#### Dealing with Variable Image Sizes
+
+```{NOTE}
+When training with batch size 1 (or if all images in your dataset have the same size), 
+you don't need to worry about any of this! However, you can still use `crop_sampling`
+which may help your model generalize.
+```
+
+When training with a batch size greater than 1, all images in a batch **must** have the
+same size. PyTorch **collates** all images into one tensor of shape `[b, c, h, w]`, 
+where `b` is the batch size, `c` the number of channels in the image, `h` and `w` the 
+height and width of images in the batches. There are a few different ways to ensure that
+all images in a batch have the same size:
+
+1. **Crop sampling**. This is the default behavior for the PyTorch engine in DeepLabCut.
+A part of each image (of a fixed size) is cropped and given to the model to train. See 
+below for more information.
+2. **A custom collate function**. Collate functions define a way that images of different
+sizes can be combined into one tensor. This involves resizing and padding images to the
+same size and aspect ratio. Available collate functions are defined in
+`deeplabcut/pose_estimation_pytorch/data/collate.py`. 
+3. **Resizing all images**. All images can simply be resized to the same size. This
+usually doesn't lead to the best performance.
+
+**Resizing - Crop Sampling**: An alternative way to ensure all images have the same size
+is through cropping. The `crop_sampling` crops images down to a maximum width and 
+height, with options to sample the center of the crop according to the positions of the
+keypoints. The methods to sample the center of the crop are as follows:
+
+- `uniform`: randomly over the image
+- `keypoints`: randomly over the annotated keypoints
+- `density`: weighing preferentially dense regions of keypoints
+- `hybrid`: alternating randomly between `uniform` and `density`
+
+```yaml
+crop_sampling:
+  height: 400  # int: the height of the crop 
+  width: 400  # int: the height of the crop 
+  max_shift: 0.4  # float: maximum allowed shift of the cropping center position as a fraction of the crop size.
+  method: hybrid # str: the center sampling method (one of 'uniform', 'keypoints', 'density', 'hybrid') 
+```
+
+**Collate**: Defines how images are collated into batches. The default way collate
+function to use is `ResizeFromDataSizeCollate` (other collate functions are defined in
+`deeplabcut/pose_estimation_pytorch/data/collate.py`). For each batch to collate, this
+implementation:
+1. Selects the target width & height all images will be resized to by getting the size 
+of the first image in the batch, and multiplying it by a scale sampled uniformly at 
+random from `(min_scale, max_scale)`.
+2. Resizes all images in the batch (while preserving their aspect ratio) such that they 
+are the smallest size such that the target size fits entirely in the image.
+3. Crops each resulting image into the target size with a random crop.
+
+```yaml
+collate:  # rescales the images when putting them in a batch
+  type: ResizeFromDataSizeCollate  # You can also use `ResizeFromListCollate`
+  max_shift: 10  # the maximum shift, in pixels, to add to the random crop (this means
+    # there can be a slight border around the image)
+  max_size: 1024  #  the maximum size of the long edge of the image when resized. If the
+    # longest side will be greater than this value, resizes such that the longest side 
+    # is this size, and the shortest side is smaller than the desired size. This is 
+    # useful to keep some information from images with extreme aspect ratios.
+  min_scale: 0.4  # the minimum scale to resize the image with
+  max_scale: 1.0  # the maximum scale to resize the image with
+  min_short_side: 128  # the minimum size of the target short side
+  max_short_side: 1152  # the maximum size of the target short side
+  multiple_of: 32  # pads the target height, width such that they are multiples of 32
+  to_square: false  # instead of using the aspect ratio of the first image, only the 
+    # short side of the first image will be used to sample a "side", and the images will
+    # be cropped in squares
 ```
 
 **Resizing**: Resizes the images while preserving the aspect ratio (first resizes to the
@@ -202,20 +245,7 @@ maximum possible size, then adds padding for the missing pixels).
 resize:
   height: 640 # int: the height to which all images will be resized
   width: 480 # int: the width to which all images will be resized
-  keep_ratio: true  # bool: the 
-```
-
-**Resizing - Crop Sampling**: An alternative way to ensure all images have the same size
-is through cropping. The `crop_sampling` crops images down to a maximum width and 
-height, with options to sample the center of the crop according to the positions of the
-keypoints.
-
-```yaml
-crop_sampling:
-  height: 400  # int: the height of the crop 
-  width: 400  # int: the height of the crop 
-  max_shift: 0.4  # float: maximum allowed shift of the cropping center position as a fraction of the crop size.
-  method: hybrid # str: how to sample the center of crops (one of 'uniform', 'keypoints', 'density', 'hybrid') 
+  keep_ratio: true  # bool: whether the aspect ratio should be preserved when resizing
 ```
 
 ### Model
@@ -288,10 +318,14 @@ runner:
     ...
   scheduler:  # optional: a learning rate scheduler
     ...
+  load_scheduler_state_dict: true/false # whether to load scheduler state when resuming training from a snapshot,
   snapshots:  # parameters for the TorchSnapshotManager
     max_snapshots: 5  # the maximum number of snapshots to save (the "best" model does not count as one of them)
     save_epochs: 25  # the interval between each snapshot save  
     save_optimizer_state: false  # whether the optimizer state should be saved with the model snapshots (very little reason to set to true)
+  gpus: # GPUs to use to train the network
+  - 0
+  - 1
 ```
 
 **Key metric**: Every time the model is evaluated on the test set, metrics are computed 
@@ -327,7 +361,7 @@ https://pytorch.org/docs/stable/optim.html). Examples:
       lr: 1e-4
 ```
 
-**Scheduler**: YYou can use [any scheduler](
+**Scheduler**: You can use [any scheduler](
 https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate) defined in
 `torch.optim.lr_scheduler`, where the arguments given are arguments of the scheduler. 
 The default scheduler is an LRListScheduler, which changes the learning rates at each 
@@ -348,6 +382,44 @@ milestone to the corresponding values in `lr_list`. Examples:
     params:
       step_size: 100
       gamma: 0.1
+```
+
+You can also use schedulers that use other schedulers as parameters, such as a 
+[`ChainedScheduler`](
+https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.ChainedScheduler.html)
+or a [`SequentialLR`](
+https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.SequentialLR.html).
+
+The `SequentialLR` can be particularly useful, such as to use a first scheduler for some
+warmup epochs, and a second scheduler later. An example usage would be:
+
+```yaml
+  # Multiply the learning rate by `factor` for the first `total_iters` epochs
+  # After 5 epochs, start decaying the learning rate by `gamma` every `step_size` epochs
+  # If the initial learning rate is set to 1, the learning rates will be:
+  #   epoch 0: 0.01  - using ConstantLR
+  #   epoch 1: 0.01  - using ConstantLR
+  #   epoch 2: 1.0   - using ConstantLR
+  #   epoch 3: 1.0   - using ConstantLR
+  #   epoch 4: 1.0   - using ConstantLR
+  #   epoch 5: 1.0   - using StepLR
+  #   epoch 6: 1.0   - using StepLR
+  #   epoch 7: 0.1   - using StepLR
+  #   epoch 8: 0.1   - using StepLR
+  scheduler:
+    type: SequentialLR
+    params:
+      schedulers:
+      - type: ConstantLR
+        params:
+          factor: 0.01
+          total_iters: 2
+      - type: StepLR
+        params:
+          step_size: 2
+          gamma: 0.1
+      milestones:
+      - 5
 ```
 
 ### Train Settings
@@ -379,10 +451,7 @@ default.
 Additionally, you can log results to [Weights and Biases](https://wandb.ai/site), by adding a
 `WandbLogger`. Just make sure you're logged in to your `wandb` account before starting 
 your training run (with `wandb login` from your shell). For more information, see their
-[tutorials](https://docs.wandb.ai/tutorials) and their documentation for 
-[`wandb.init`](https://docs.wandb.ai/ref/python/init). You can also log images as they are seen by the model to `wandb` 
-with the `image_log_interval`. This logs a random train and test image, as well as the 
-targets and heatmaps for that image.
+[tutorials](https://docs.wandb.ai/tutorials) and their documentation for [`wandb.init`](https://docs.wandb.ai/ref/python/init).
 
 Logging to `wandb` is a good way to keep track of what you've run, including performance
 and metrics.
@@ -390,11 +459,34 @@ and metrics.
 ```yaml
 logger:
  type: WandbLogger
- image_log_interval: 5  # how often images are logged to wandb (in epochs)
  project_name: my-dlc3-project  # the name of the project where the run should be logged
  run_name: dekr-w32-shuffle0  # the name of the run to log
  ...  # any other argument you can pass to `wandb.init`, such as `tags: ["dekr", "split=0"]`
 ```
+
+You can also log images as they are seen by the model to `wandb` 
+with the `image_log_interval`. This logs a random train and test image, as well as the 
+targets and heatmaps for that image.
+
+### Restarting Training at a Specific Checkpoint
+
+If you wish to restart the training at a specific checkpoint, you can specify the
+full path of the checkpoint to the `resume_training_from` variable, as shown below. In this 
+example, `snapshot-010.pt` will be loaded before training starts, and the model will 
+continue to train from the 10th epoch on.
+
+```yaml
+# model configuration
+...
+# weights from which to resume training
+resume_training_from: /Users/john/dlc-project-2021-06-22/dlc-models-pytorch/iteration-0/dlcJun22-trainset95shuffle0/train/snapshot-010.pt
+```
+
+When continuing to train a model, you may want to modify the learning rate scheduling 
+that was being used (by editing the configuration under the `scheduler` key). When doing
+so, you *must set `load_scheduler_state_dict: false`* in your `runner` config! 
+Otherwise, the parameters for the scheduler your started training with will be loaded 
+from the state dictionary, and your edits might not be kept!
 
 ## Training Top-Down Models
 
@@ -435,17 +527,62 @@ detector:
     ...
   train_settings: # detector train settings (same keys as for the pose model)
     ...
+  resume_training_from: # optional: restart the training at the specific checkpoint
 ```
 
-Currently, the only detector available is a `FasterRCNN`. However, multiple variants are
-available (you can view the different variants on [torchvision's object detection page](
-https://pytorch.org/vision/stable/models.html#object-detection)). It's recommended to
-use the fastest detector that brings enough performance. The recommended variants
-are the following (from fastest to most powerful, taken from torchvision's
-documentation):
+Currently, the only detectors available are `FasterRCNN` and `SSDLite`. However, multiple variants of
+`FasterRCNN` are available (you can view the different variants on 
+[torchvision's object detection page](https://pytorch.org/vision/stable/models.html#object-detection)). It's recommended to use the fastest 
+detector that brings enough performance. The recommended variants are the following 
+(from fastest to most powerful, taken from torchvision's documentation):
 
-| name                              |  Box MAP (larger = more powerful) | Params (larger = more powerful) |    GFLOPS (larger = slower) |
-|-----------------------------------|----------------------------------:|--------------------------------:|----------------------------:|
-| fasterrcnn_mobilenet_v3_large_fpn |                              32.8 |                           19.4M |                        4.49 |
-| fasterrcnn_resnet50_fpn           |                                37 |                           41.8M |                      134.38 |
-| fasterrcnn_resnet50_fpn_v2        |                              46.7 |                           43.7M |                      280.37 |
+| name                              | Box MAP (larger = more powerful) | Params (larger = more powerful) | GFLOPS (larger = slower) |
+|-----------------------------------|---------------------------------:|--------------------------------:|-------------------------:|
+| SSDLite                           |                             21.3 |                            3.4M |                     0.58 |
+| fasterrcnn_mobilenet_v3_large_fpn |                             32.8 |                           19.4M |                     4.49 |
+| fasterrcnn_resnet50_fpn           |                               37 |                           41.8M |                   134.38 |
+| fasterrcnn_resnet50_fpn_v2        |                             46.7 |                           43.7M |                   280.37 |
+
+
+### Restarting Training of an Object Detector at a Specific Checkpoint
+
+If you wish to restart the training of a detector at a specific checkpoint, you can
+specify the full path of the checkpoint to the detector's `resume_training_from` variable, as
+shown below. In this example, `snapshot-detector-020.pt` will be loaded before training
+starts, and the model will continue to train from the 20th epoch on.
+
+```yaml
+detector:
+  # detector configuration
+  ...
+  # weights from which to resume training
+  resume_training_from: /Users/john/dlc-project-2021-06-22/dlc-models-pytorch/iteration-0/dlcJun22-trainset95shuffle0/train/snapshot-detector-020.pt
+```
+
+When continuing to train a detector, you may want to modify the learning rate scheduling 
+that was being used (by editing the configuration under the `scheduler` key). When doing
+so, you *must set `load_scheduler_state_dict: false`* in your `detector`: `runner`
+config! Otherwise, the parameters for the scheduler your started training with will be
+loaded from the state dictionary, and your edits might not be kept!
+
+(bbox-from-pose)=
+### Generating Bounding Boxes from Pose
+
+To train object detection models (for top-down pose estimation), ground truth bounding
+boxes are needed. As they are not annotated in DeepLabCut, they are generated from the
+ground truth pose: simply take the minimum and maximum for the x and y axes, add a small
+margin and you have your bounding box! The default setting adds a margin of 20 pixels
+around the pose. This works well in most cases, but in some cases you should update this 
+value (e.g. when you have very small or large images).
+
+You can edit that value in the `pytorch_config.yaml` for your model through the 
+`data: bbox_margin` parameter for the detector:
+
+```yaml
+detector:
+  data:
+    bbox_margin: 20
+    ...
+```
+
+![Bounding boxes generated from pose with different margins](assets/bboxes_from_kpts.png)
